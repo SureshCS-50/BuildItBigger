@@ -27,8 +27,9 @@ import com.sureshcs50.jokelib_android.JokeActivity;
 public class MainFragment extends Fragment implements OnJokeReceivedListener {
 
     private InterstitialAd mInterstitialAd;
-    private ProgressBar progressBar;
+    private ProgressBar mProgressBar;
     private String mJoke;
+    private Button mBtnJoke;
 
 
     public MainFragment() {
@@ -38,13 +39,15 @@ public class MainFragment extends Fragment implements OnJokeReceivedListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_main, container, false);
+
         AdView mAdView = (AdView) root.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();
         mAdView.loadAd(adRequest);
+
         mInterstitialAd = new InterstitialAd(getContext());
-        mInterstitialAd.setAdUnitId(getString(R.string.banner_ad_unit_id));
+        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
         mInterstitialAd.setAdListener(new AdListener() {
             @Override
             public void onAdClosed() {
@@ -53,9 +56,11 @@ public class MainFragment extends Fragment implements OnJokeReceivedListener {
         });
 
         requestNewInterstitial();
-        progressBar = (ProgressBar) root.findViewById(R.id.progressBar);
-        Button button = (Button) root.findViewById(R.id.tell_joke_button);
-        button.setOnClickListener(new View.OnClickListener() {
+        mProgressBar = (ProgressBar) root.findViewById(R.id.progressBar);
+        mProgressBar.setVisibility(View.INVISIBLE);
+
+        mBtnJoke = (Button) root.findViewById(R.id.btnJoke);
+        mBtnJoke.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 fetchJoke();
@@ -67,7 +72,7 @@ public class MainFragment extends Fragment implements OnJokeReceivedListener {
 
     private void requestNewInterstitial() {
         AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice("AA37CAB351D645D2B79AC6AD2D158791")
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();
 
         mInterstitialAd.loadAd(adRequest);
@@ -75,14 +80,13 @@ public class MainFragment extends Fragment implements OnJokeReceivedListener {
 
     @Override
     public void onReceived(String joke) {
-        progressBar.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.INVISIBLE);
+        mBtnJoke.setEnabled(true);
         mJoke = joke;
         if (mInterstitialAd != null && mInterstitialAd.isLoaded()) {
             mInterstitialAd.show();
-            startJokeActivity();
-        } else {
-            startJokeActivity();
         }
+        startJokeActivity();
     }
 
     private void startJokeActivity() {
@@ -92,7 +96,8 @@ public class MainFragment extends Fragment implements OnJokeReceivedListener {
     }
 
     public void fetchJoke() {
-        progressBar.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.VISIBLE);
+        mBtnJoke.setEnabled(false);
         new EndpointsAsyncTask().execute(this);
     }
 }

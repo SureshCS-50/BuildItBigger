@@ -37,7 +37,7 @@ public class EndpointsAsyncTask extends AsyncTask<OnJokeReceivedListener, Void, 
         listener = params[0];
 
         try {
-            return myApiService.sayHi("joke").execute().getData();
+            return myApiService.sayJoke().execute().getData();
         } catch (IOException e) {
             return e.getMessage();
         }
