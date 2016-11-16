@@ -49,8 +49,8 @@ public class MainFragment extends Fragment implements OnJokeReceivedListener {
     @Override
     public void onReceived(String joke) {
         mProgressBar.setVisibility(View.INVISIBLE);
-        Intent intent = new Intent(getActivity(), JokeDisplayActivity.class);
-        intent.putExtra(JokeDisplayActivity.INTENT_KEY, joke);
+        Intent intent = new Intent(getActivity(), JokeActivity.class);
+        intent.putExtra(JokeActivity.KEY_JOKE, joke);
         startActivity(intent);
     }
 
